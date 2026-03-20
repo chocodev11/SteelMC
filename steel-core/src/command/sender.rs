@@ -30,8 +30,7 @@ impl CommandSender {
         match self {
             Self::Player(player) => player.send_message(text),
             Self::Console => log::info!("{:p}", *text),
-            // TODO: Implement Rcon message sending
-            Self::Rcon => unimplemented!(),
+            Self::Rcon => log::info!("[RCON] {:p}", *text),
         }
     }
 }
