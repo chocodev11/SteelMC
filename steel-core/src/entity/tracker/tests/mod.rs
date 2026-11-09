@@ -166,11 +166,17 @@ fn track_entity_for_player(tracker: &EntityTracker, entity: &SharedEntity, playe
             .insert_sync(entity.id(), tracked_entity)
             .is_ok()
     );
+    tracker
+        .by_chunk
+        .write()
+        .insert(ChunkPos::from_entity_pos(pos), entity.id());
+    tracker.seen_by_player.lock().insert(player_id, entity.id());
 }
 
 fn mark_seen_by_player(tracker: &EntityTracker, entity_id: i32, player_id: i32) {
     tracker.entities.update_sync(&entity_id, |_, tracked| {
         tracked.seen_by.write().insert(player_id);
+        tracker.seen_by_player.lock().insert(player_id, entity_id);
     });
 }
 
@@ -197,5 +203,6 @@ fn assert_has_velocity_packet(
 
 mod packet_sync;
 mod passenger_leash;
+mod player_refresh;
 mod spawn_despawn;
 mod visibility_range;
